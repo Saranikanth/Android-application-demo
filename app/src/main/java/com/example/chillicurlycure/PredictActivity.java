@@ -1,4 +1,4 @@
-package com.example.cartoonclassification;
+package com.example.chillicurlycure;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,14 +10,13 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.SeekBar;
 import android.widget.TextView;
-
-import com.example.cartoonclassification.R;
 
 import org.tensorflow.lite.DataType;
 import org.tensorflow.lite.Interpreter;
@@ -44,18 +43,14 @@ import java.util.Map;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.HorizontalBarChart;
-import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
-import com.github.mikephil.charting.utils.ColorTemplate;
 
 
-
-
-public class MainActivity extends AppCompatActivity {
+public class PredictActivity extends AppCompatActivity {
 
     protected Interpreter tflite;
     private MappedByteBuffer tfliteModel;
@@ -71,9 +66,11 @@ public class MainActivity extends AppCompatActivity {
     private Bitmap bitmap;
     private List<String> labels;
     private HorizontalBarChart mBarChart;
+    //private static int Splash_time_out = 6000;
     ImageView imageView;
     Uri imageuri;
-    Button buclassify;
+    ImageButton buclassify;
+    ImageButton select_button;
 
     TextView prediction;
 
@@ -81,17 +78,18 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        imageView=(ImageView)findViewById(R.id.image);
-        buclassify=(Button)findViewById(R.id.classify);
+        setContentView(R.layout.activity_predict);
+
+        //Select Button assign
+        select_button=(ImageButton) findViewById(R.id.select_btn);
+        imageView = (ImageView) findViewById(R.id.photo);
+        buclassify=(ImageButton)findViewById(R.id.classify);
         prediction=(TextView)findViewById(R.id.predictions);
 
 
 
 
-
-
-        imageView.setOnClickListener(new View.OnClickListener() {
+        select_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent=new Intent();
@@ -102,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         try{
-            tflite=new Interpreter(loadmodelfile(MainActivity.this));
+            tflite=new Interpreter(loadmodelfile(PredictActivity.this));
         }catch (Exception e) {
             e.printStackTrace();
         }
@@ -161,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private MappedByteBuffer loadmodelfile(Activity activity) throws IOException {
-        AssetFileDescriptor fileDescriptor=activity.getAssets().openFd("cartoon_model.tflite");
+        AssetFileDescriptor fileDescriptor=activity.getAssets().openFd("model.tflite");
         FileInputStream inputStream=new FileInputStream(fileDescriptor.getFileDescriptor());
         FileChannel fileChannel=inputStream.getChannel();
         long startoffset = fileDescriptor.getStartOffset();
@@ -185,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
 
         barChart.setDrawGridBackground(true);
         BarDataSet barDataSet = new BarDataSet(arrayList, "Class");
-        barDataSet.setColors(new int[]{Color.parseColor("#03A9F4"), Color.parseColor("#FF9800"),
+        barDataSet.setColors(new int[]{Color.parseColor("#FFFFFF"), Color.parseColor("#FFFFFF"),
         Color.parseColor("#76FF03"), Color.parseColor("#E91E63"), Color.parseColor("#2962FF")});
         //barDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
         BarData barData = new BarData(barDataSet);
@@ -199,7 +197,8 @@ public class MainActivity extends AppCompatActivity {
         //Legend l = barChart.getLegend(); // Customize the ledgends
         //l.setTextSize(10f);
         //l.setFormSize(10f);
-//To set components of x axis
+        //To set components of x axis
+
         XAxis xAxis = barChart.getXAxis();
         xAxis.setTextSize(13f);
         xAxis.setPosition(XAxis.XAxisPosition.TOP_INSIDE);
@@ -214,7 +213,7 @@ public class MainActivity extends AppCompatActivity {
     private void showresult(){
 
         try{
-            labels = FileUtil.loadLabels(MainActivity.this,"cartoon_labels.txt");
+            labels = FileUtil.loadLabels(PredictActivity.this,"labels.txt");
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -231,6 +230,7 @@ public class MainActivity extends AppCompatActivity {
             mBarChart = findViewById(R.id.chart);
             mBarChart.getXAxis().setDrawGridLines(false);
             mBarChart.getAxisLeft().setDrawGridLines(false);
+
             // PREPARING THE ARRAY LIST OF BAR ENTRIES
             ArrayList<BarEntry> barEntries = new ArrayList<>();
             for(int i=0; i<label_probability.length; i++)
@@ -243,9 +243,13 @@ public class MainActivity extends AppCompatActivity {
             for(int i=0;i<label.length; i++)
             {
                 xAxisName.add(label[i]);
+               /* if (label[i].equals("Affected")){
+                    //navigate_to_remedy1();
+                }*/
             }
             barchart(mBarChart,barEntries,xAxisName);
             prediction.setText("Predictions:");
+
 
 
  //           }
@@ -266,5 +270,18 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+    /*public void navigate_to_remedy1(){
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run(){
+                Intent homeIntent = new Intent(PredictActivity.this, RemedyActivity.class);
+                startActivity(homeIntent);
+                finish();
+            }
+        },Splash_time_out);
+
+    }*/
 }
 

@@ -1,15 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.cartoonclassification">
+    package="com.example.chillicurlycure">
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/cartoon"
+        android:icon="@drawable/logo"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.example.cartoonclassification.MainActivity">
+        <activity android:name=".SinhalaRemedyActivity"></activity>
+        <activity android:name=".SinhalaSymptomActivity" />
+        <activity android:name=".TamilRemedyActivity" />
+        <activity android:name=".TamilSymptomActivity" />
+        <activity android:name=".SinhalaPredictActivity" />
+        <activity android:name=".TamilPredictActivity" />
+        <activity android:name=".SinhalaDashboardActivity" />
+        <activity android:name=".TamilDashboardActivity" />
+        <activity android:name=".LanguageActivity" />
+        <activity android:name=".RemedyActivity" />
+        <activity android:name=".SymptomActivity" />
+        <activity android:name=".DashboardActivity" />
+        <activity android:name=".PredictActivity" />
+        <activity android:name=".SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
